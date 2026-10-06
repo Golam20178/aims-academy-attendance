@@ -76,7 +76,7 @@ export function Portal({ page, id }: { page: string; id?: string }) {
         <LoaderCircle className="size-5 animate-spin" /> Loading AIMS Academy…
       </div>
     );
-  if (page === "login") return <Login />;
+  if (page === "login") return <Login connectionError={state.error} />;
   const title = nav.find((n) => n.path === page)?.label ?? "Student profile";
   let content: ReactNode;
   switch (page) {
@@ -143,14 +143,13 @@ export function Portal({ page, id }: { page: string; id?: string }) {
         <SidebarFooter className="p-4">
           <div className="rounded-xl border bg-background p-3 text-xs text-muted-foreground">
             <Badge variant="secondary" className="mb-2">
-              Local workspace
+              Connected workspace
             </Badge>
-            <p>Records stay in this browser. Export backups from Settings.</p>
+            <p>Records are shared securely through your academy database.</p>
           </div>
           <SidebarMenuButton
-            onClick={() => {
-              signOut();
-              router.replace("/login");
+            onClick={async () => {
+              if (await signOut()) router.replace("/login");
             }}
           >
             <LogOut />
@@ -167,7 +166,7 @@ export function Portal({ page, id }: { page: string; id?: string }) {
           <div className="flex items-center gap-2 text-xs">
             <ShieldCheck className="size-4 text-primary" />
             <span>Academy Admin</span>
-            <Badge variant="outline">Demo</Badge>
+            <Badge variant="outline">Admin</Badge>
           </div>
         </header>
         <main className="mx-auto w-full max-w-7xl space-y-6 p-4 md:p-8">
@@ -177,24 +176,29 @@ export function Portal({ page, id }: { page: string; id?: string }) {
               <AlertDescription>{state.error}</AlertDescription>
             </Alert>
           )}
-          {content}
+          <fieldset disabled={state.saving} className="min-w-0 space-y-6">{content}</fieldset>
           <footer className="border-t pt-5 text-xs text-muted-foreground">
-            AIMS Academy · Local preview · Supabase integration planned
+            AIMS Academy · Attendance Portal
           </footer>
         </main>
       </SidebarInset>
     </SidebarProvider>
   );
 }
-function Login() {
+function Login({ connectionError }: { connectionError: string | null }) {
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
   const router = useRouter();
-  function submit(e: FormEvent<HTMLFormElement>) {
+  async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
-    if (signIn(String(f.get("email")), String(f.get("password"))))
-      router.replace("/dashboard");
-    else setError("Use the demo credentials shown below.");
+    if (busy) return;
+    setBusy(true);
+    setError("");
+    const message = await signIn(String(f.get("email")), String(f.get("password")));
+    setBusy(false);
+    if (message) setError(message);
+    else { router.replace("/dashboard"); router.refresh(); }
   }
   return (
     <main className="grid min-h-screen lg:grid-cols-2">
@@ -251,7 +255,7 @@ function Login() {
                     name="email"
                     type="email"
                     autoComplete="username"
-                    placeholder="admin@aims.local"
+                    placeholder="Enter your email"
                     required
                   />
                 </div>
@@ -265,32 +269,18 @@ function Login() {
                     required
                   />
                 </div>
-                {error && (
+                {(error || connectionError) && (
                   <p role="alert" className="text-sm text-destructive">
-                    {error}
+                    {error || connectionError}
                   </p>
                 )}
-                <Button type="submit" className="w-full" size="lg">
-                  Sign in <ArrowRight />
+                <Button type="submit" className="w-full" size="lg" disabled={busy}>
+                  {busy ? "Signing in…" : "Sign in"} <ArrowRight />
                 </Button>
               </form>
             </CardContent>
           </Card>
-          <Alert>
-            <ShieldCheck />
-            <AlertTitle>Local demo access</AlertTitle>
-            <AlertDescription>
-              <p>
-                Email: <strong>admin@aims.local</strong>
-                <br />
-                Password: <strong>AimsDemo123!</strong>
-              </p>
-              <p className="mt-2">
-                This login is for local preview. Secure admin authentication
-                will be connected with Supabase.
-              </p>
-            </AlertDescription>
-          </Alert>
+
         </div>
       </section>
     </main>

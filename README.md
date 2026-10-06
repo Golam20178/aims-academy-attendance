@@ -1,36 +1,55 @@
 # AIMS Academy Attendance Portal
 
-Local Next.js 16 portal using TypeScript, Tailwind CSS, shadcn/ui, Recharts, and Lucide.
+Next.js 16, TypeScript, Tailwind CSS, shadcn/ui, Supabase, Recharts, Lucide and pnpm.
 
 ## Run locally
 
+Copy `.env.example` to `.env.local` and set the Supabase project URL and publishable key.
+Never put a secret or service-role key in a NEXT_PUBLIC variable.
+
 ```sh
-export PATH="/Users/farisul/Library/pnpm/bin:/Users/farisul/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:$PATH"
-cd /Users/farisul/Desktop/attendance
+pnpm install
 pnpm dev
 ```
 
-Open http://localhost:3000. Demo login: `admin@aims.local` / `AimsDemo123!`.
+Open http://localhost:3000. Sign in with a confirmed, approved Supabase account.
+`pnpm build` creates the production build; `pnpm start` serves it; `pnpm lint` checks code.
 
-`pnpm build` creates the production build; `pnpm start` serves it. `pnpm lint` checks code.
+## Administrator setup
 
-## Local features
+In Supabase Authentication → Users, create the approved administrator account with a strong password and confirmed email. Dashboard developer membership is separate from app login.
+There is no public registration page, demo password or browser-only authentication bypass.
+Admin authorization uses confirmed identities from auth.users, an explicitly approved private email list, or an active user ID in public.admins. User-editable metadata does not grant access.
+Only project administrators can change the approvals using SQL. No frontend can approve itself.
+Disable public signups in Supabase Authentication settings when provisioning accounts through the dashboard.
 
-- Responsive academy navigation and supplied logo.
-- Student and teacher CRUD, unique IDs, search, level/status filters, and CSV exports.
-- Student profiles with contact information, monthly attendance charts, date filters, and history.
-- Student and teacher attendance by date and level. Unmarked is distinct from absent. Save updates one record per person/date; saved records can be removed.
-- Overview and reports computed from saved attendance.
-- Browser localStorage persistence, JSON backup/restore with confirmation and schema validation.
-- New workspaces start empty. Existing sample people and their attendance are removed by a one-time migration. Real records are retained; students with old generic levels need an OTHM programme selected when edited.
-- Student level dropdown contains the seven approved OTHM Level 3 and Level 5 programmes. Teacher choices are IT Lecturer, BM Lecturer, and THM Lecturer. Existing generic teacher levels need role assignment when edited.
-- Overview attendance chart is filtered to one selected student programme.
-- Browser tab login is a demo convenience, not secure authorization.
+## Features
 
-Records belong to the current browser and origin (including port). Use Settings to export backups before clearing storage or moving origins. No database or deployment is configured.
+- Student and teacher CRUD, unique IDs, search, filters and CSV exports.
+- Student profiles, attendance charts, date filters and history.
+- Student and teacher attendance, one entry per person per date; unmarked differs from absent.
+- Seven approved OTHM programmes and IT/BM/THM lecturer roles.
+- Overview chart filtered by student programme.
+- Shared cloud records, JSON export/import with validation and confirmation.
+- Database constraints reject duplicates, orphan records, invalid roles and future attendance.
+- Atomic saves with revision checks reject stale edits. Reload and retry after concurrent changes.
+- Existing local browser data remains untouched. Settings can export it for reviewed import.
 
-## Next phase
+## Database
 
-Replace the local repository adapter (`src/lib/local-store.ts`) with Supabase persistence; add Supabase Auth and database row-level authorization. Migrate validated records, then deploy to Vercel after approval. Do not expose the demo login as production authentication.
+Versioned SQL in supabase/migrations records the applied cloud setup.
+All public tables enable RLS. Anonymous users have no table or workspace RPC access.
+Authenticated accounts require administrator approval; the private approval lookup cannot be read or edited by clients.
+The private security-definer lookup has a fixed empty search path and checks auth.uid().
+Workspace functions run as the caller and enforce approval, constraints and transactional writes.
+The adapter keeps the existing local-store.ts filename for compatibility but persists to Supabase rather than localStorage.
 
-UI conventions are saved in AGENTS.md (also referenced by CLAUDE.md).
+## Deployment
+
+Vercel deployment remains pending approval. Add the two environment variables there, configure Supabase site/redirect URLs for the chosen domain, then verify admin login and CRUD in a preview before production.
+Configure email delivery/recovery and account protection in Supabase before production.
+UI conventions are in AGENTS.md. Install additional shadcn components with `pnpm dlx shadcn@latest add <component>`; its CLI is not an application runtime dependency.
+
+The official shadcn stylesheet is vendored with its license in src/styles to keep the CLI out of runtime dependencies.
+
+Security checks: production dependency audit and Supabase security advisors are clean. The development-only ESLint dependency currently inherits the unpatched braces advisory GHSA-vfj7-8cjw-p6xm; do not process untrusted glob patterns in tooling.

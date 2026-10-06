@@ -15,7 +15,6 @@ import {
   ArrowLeft,
   Check,
   Save,
-  Upload,
   Database as DatabaseIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -462,8 +461,8 @@ export function People({ kind, db }: { kind: Kind; db: Database }) {
       <DeleteDialog
         person={deleting}
         onClose={() => setDeleting(null)}
-        onConfirm={() => {
-          if (deleting && saveDatabase(removePerson(db, kind, deleting.id))) {
+        onConfirm={async () => {
+          if (deleting && await saveDatabase(removePerson(db, kind, deleting.id))) {
             toast.success(`${noun} deleted`);
             setDeleting(null);
           }
@@ -489,7 +488,7 @@ function PersonEditor({
   const [status, setStatus] = useState(person?.status ?? "Active");
   const [error, setError] = useState("");
   const noun = kind === "students" ? "student" : "teacher";
-  function submit(e: FormEvent<HTMLFormElement>) {
+  async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (kind === "students" && !(levels as readonly string[]).includes(level)) {
       setError("Choose an OTHM programme for this student.");
@@ -526,7 +525,7 @@ function PersonEditor({
     const people = person
       ? db[kind].map((p) => (p.id === person.id ? parsed.data : p))
       : [...db[kind], parsed.data];
-    if (saveDatabase({ ...db, [kind]: people })) {
+    if (await saveDatabase({ ...db, [kind]: people })) {
       toast.success(`${noun} ${person ? "updated" : "added"}`);
       onClose();
     }
@@ -643,7 +642,7 @@ function DeleteDialog({
           <AlertDialogTitle>Delete {person?.name}?</AlertDialogTitle>
           <AlertDialogDescription>
             This removes the person and all their attendance records from this
-            browser. Export a backup first if you need to keep them.
+            academy database. Export a backup first if you need to keep them.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -746,7 +745,7 @@ function AttendanceSheet({
   const marked = eligible.filter((p) => get(p.id));
   const present = marked.filter((p) => get(p.id) === "Present").length;
   const future = date > today();
-  function save() {
+  async function save() {
     if (future) {
       toast.error("Future attendance cannot be saved.");
       return;
@@ -755,7 +754,7 @@ function AttendanceSheet({
       toast.info("Choose attendance statuses before saving.");
       return;
     }
-    if (saveDatabase(upsertAttendance(db, kind, date, draft))) {
+    if (await saveDatabase(upsertAttendance(db, kind, date, draft))) {
       setDraft({});
       toast.success("Attendance saved");
     }
@@ -940,10 +939,10 @@ function AttendanceSheet({
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
-              onClick={() => {
+              onClick={async () => {
                 if (
                   deleting &&
-                  saveDatabase({
+                  await saveDatabase({
                     ...db,
                     attendance: db.attendance.filter(
                       (r) =>
@@ -1436,14 +1435,14 @@ export function SettingsPage({ db }: { db: Database }) {
     <>
       <Heading
         title="Workspace settings"
-        description="Keep your local records backed up and ready for the next phase."
+        description="Manage your shared academy records and backups."
       />
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <DatabaseIcon className="size-5" />
-              Local data & backups
+              Database & backups
             </CardTitle>
             <CardDescription>
               {db.students.length} students · {db.teachers.length} teachers ·{" "}
@@ -1452,9 +1451,8 @@ export function SettingsPage({ db }: { db: Database }) {
           </CardHeader>
           <CardContent className="space-y-5">
             <p className="text-sm text-muted-foreground">
-              Data is stored in this browser on this device. Clearing browser
-              data removes it. Export a JSON backup to preserve all records or
-              move them to another browser.
+              Records are stored in your academy database. Export a JSON backup
+              before importing data or making large changes.
             </p>
             <Button
               onClick={() =>
@@ -1469,6 +1467,14 @@ export function SettingsPage({ db }: { db: Database }) {
               <Download />
               Export full backup
             </Button>
+            <Button variant="outline" onClick={() => {
+              try {
+                const raw = localStorage.getItem("aims-academy-v1");
+                if (!raw) { toast.info("No previous browser records were found."); return; }
+                const previous = migrateDatabase(JSON.parse(raw));
+                download(new Blob([JSON.stringify(previous, null, 2)], { type: "application/json" }), `aims-previous-browser-backup-${today()}.json`);
+              } catch { toast.error("Previous browser records could not be read. They have not been changed."); }
+            }}>Export previous browser records</Button>
             <div className="space-y-2">
               <Label htmlFor="backup">Restore JSON backup</Label>
               <Input
@@ -1506,20 +1512,12 @@ export function SettingsPage({ db }: { db: Database }) {
             </div>
             <div className="flex justify-between">
               <span>Authentication</span>
-              <span>Local demo</span>
+              <span>Supabase admin access</span>
             </div>
           </CardContent>
         </Card>
       </div>
-      <Alert>
-        <Upload />
-        <AlertTitle>Next phase: connected academy</AlertTitle>
-        <AlertDescription>
-          Supabase will provide secure admin authentication and shared database
-          records. Vercel deployment will follow after you approve it. The
-          current version is a local preview with sample data.
-        </AlertDescription>
-      </Alert>
+
       <AlertDialog
         open={!!pending}
         onOpenChange={(open) => !open && setPending(null)}
@@ -1528,7 +1526,7 @@ export function SettingsPage({ db }: { db: Database }) {
           <AlertDialogHeader>
             <AlertDialogTitle>Restore this backup?</AlertDialogTitle>
             <AlertDialogDescription>
-              This replaces all local records with {pending?.students.length}{" "}
+              This replaces all academy records with {pending?.students.length}{" "}
               students, {pending?.teachers.length} teachers, and{" "}
               {pending?.attendance.length} attendance records. Export your
               current backup first.
@@ -1537,8 +1535,8 @@ export function SettingsPage({ db }: { db: Database }) {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => {
-                if (pending && restoreDatabase(pending)) {
+              onClick={async () => {
+                if (pending && await restoreDatabase(pending)) {
                   setPending(null);
                   toast.success("Backup restored");
                 }
