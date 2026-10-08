@@ -116,7 +116,7 @@ export function Portal({ page, id }: { page: string; id?: string }) {
             />
           </Link>
           <p className="mt-2 text-xs text-muted-foreground">
-            Attendance & academy management
+            E-Attendance Portal
           </p>
         </SidebarHeader>
         <SidebarContent>
