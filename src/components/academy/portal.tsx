@@ -115,8 +115,8 @@ export function Portal({ page, id }: { page: string; id?: string }) {
               className="h-auto w-full rounded bg-white p-1"
             />
           </Link>
-          <p className="mt-2 text-xs text-muted-foreground">
-            E-Attendance Portal
+          <p className="mt-2 text-base text-muted-foreground">
+            E-Attendance 
           </p>
         </SidebarHeader>
         <SidebarContent>
