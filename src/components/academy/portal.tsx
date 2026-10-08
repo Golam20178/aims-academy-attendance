@@ -211,7 +211,7 @@ function Login({ connectionError }: { connectionError: string | null }) {
           className="rounded-lg bg-white p-3"
         />
         <div>
-          <Badge className="mb-5 bg-white/15 text-white">AIMS ACADEMY</Badge>
+          <Badge className="mb-5 bg-white/15 text-white">E-Attendance</Badge>
           <h1 className="max-w-lg text-5xl font-semibold leading-tight">
             Every student.
             <br />
