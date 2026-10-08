@@ -1500,7 +1500,7 @@ export function SettingsPage({ db }: { db: Database }) {
           <CardContent className="space-y-4 text-sm">
             <div className="flex justify-between border-b pb-3">
               <span>Levels</span>
-              <span>7 OTHM programmes</span>
+              <span>14 programme options</span>
             </div>
             <div className="flex justify-between border-b pb-3">
               <span>Attendance</span>

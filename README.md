@@ -28,7 +28,7 @@ Disable public signups in Supabase Authentication settings when provisioning acc
 - Student and teacher CRUD, unique IDs, search, filters and CSV exports.
 - Student profiles, attendance charts, date filters and history.
 - Student and teacher attendance, one entry per person per date; unmarked differs from absent.
-- Seven approved OTHM programmes and IT/BM/THM lecturer roles.
+- Seven OTHM programmes, each available as a standard or online option, and IT/BM/THM lecturer roles.
 - Overview chart filtered by student programme.
 - Shared cloud records, JSON export/import with validation and confirmation.
 - Database constraints reject duplicates, orphan records, invalid roles and future attendance.
