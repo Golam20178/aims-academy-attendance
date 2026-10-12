@@ -206,6 +206,10 @@ export type Database = {
         Args: { expected_revision: number; payload: Json }
         Returns: number
       }
+      save_attendance_changes: {
+        Args: { p_changes: Json; p_date: string; p_kind: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

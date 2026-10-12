@@ -66,6 +66,39 @@ export async function saveDatabase(db:Database) {
  toast.error("The changes could not be saved. Check your connection and record values, then retry.");return false;
  }
 }
+export async function saveAttendanceChanges(
+  kind: "students" | "teachers",
+  date: string,
+  changes: Record<string, "Present" | "Absent">,
+) {
+ if (!snapshot?.authenticated || snapshot.error || snapshot.saving) {
+  toast.error("Wait for the workspace to finish loading or saving.");
+  return false;
+ }
+ if (!Object.keys(changes).length) return true;
+ snapshot={...snapshot,saving:true};emit();
+ try {
+  const result=await createClient().rpc("save_attendance_changes",{
+   p_kind:kind,
+   p_date:date,
+   p_changes:changes,
+  });
+  if (result.error) throw result.error;
+  const changedIds=new Set(Object.keys(changes));
+  const attendance=[
+   ...snapshot.db.attendance.filter((record)=>
+    !(record.kind===kind && record.date===date && changedIds.has(record.personId)),
+   ),
+   ...Object.entries(changes).map(([personId,status])=>({personId,kind,date,status})),
+  ];
+  snapshot={...snapshot,db:{...snapshot.db,attendance},saving:false};emit();
+  return true;
+ } catch {
+  snapshot={...snapshot,saving:false};emit();
+  toast.error("Attendance could not be saved. Refresh the page and try again.");
+  return false;
+ }
+}
 export const restoreDatabase=saveDatabase;
 export async function signIn(email:string,password:string):Promise<string|null> {
  try {

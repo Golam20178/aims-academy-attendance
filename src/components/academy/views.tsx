@@ -68,12 +68,15 @@ import {
   today,
   summary,
   personSchema,
-  upsertAttendance,
   removePerson,
   exportCsv,
   download,
 } from "@/lib/academy";
-import { saveDatabase, restoreDatabase } from "@/lib/local-store";
+import {
+  saveAttendanceChanges,
+  saveDatabase,
+  restoreDatabase,
+} from "@/lib/local-store";
 import {
   Heading,
   Stat,
@@ -754,7 +757,7 @@ function AttendanceSheet({
       toast.info("Choose attendance statuses before saving.");
       return;
     }
-    if (await saveDatabase(upsertAttendance(db, kind, date, draft))) {
+    if (await saveAttendanceChanges(kind, date, draft)) {
       setDraft({});
       toast.success("Attendance saved");
     }
