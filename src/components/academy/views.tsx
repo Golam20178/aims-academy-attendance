@@ -667,7 +667,7 @@ export function AttendancePage({ db }: { db: Database }) {
         description="Mark present or absent, then save the sheet. Existing records can be corrected."
       />
       <Card>
-        <CardContent className="flex flex-wrap items-end gap-4 pt-5">
+        <CardContent className="flex flex-wrap items-center gap-4 pt-5">
           <div className="w-40 space-y-2">
             <Label>Attendance for</Label>
             <Choice
@@ -689,7 +689,7 @@ export function AttendancePage({ db }: { db: Database }) {
               }}
             />
           </div>
-          <div className="w-44 space-y-2">
+          <div className="w-100 space-y-2">
             <Label>Level</Label>
             <Choice
               value={level}
