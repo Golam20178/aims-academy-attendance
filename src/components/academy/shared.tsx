@@ -90,7 +90,7 @@ export function Stat({
 }) {
   return (
     <Card>
-      <CardContent className="flex items-start justify-between gap-3 pt-5">
+      <CardContent className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm text-muted-foreground">{label}</p>
           <p className="my-2 text-3xl font-semibold">{value}</p>
