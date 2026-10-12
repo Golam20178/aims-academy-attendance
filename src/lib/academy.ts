@@ -1,26 +1,33 @@
 import { z } from "zod";
 export const levels = [
-  "Level 3: OTHM Level 3 Foundation Diploma in Higher Education Studies (HES)",
-  "Level 3: OTHM Level 3 Foundation Diploma in Information Technology",
+  // Level 3
   "Level 3: OTHM Level 3 Foundation Diploma in Business Management",
-  "Level 5: OTHM Level 5 Extended Diploma in Information Technology",
-  "Level 5: OTHM Level 5 Extended Diploma in Business Management",
-  "Level 5: OTHM Level 5 Diploma in Tourism and Hospitality Management",
-  "Level 5: OTHM Level 5 Diploma in Logistics and Supply Chain Management",
-  "Level 3: OTHM Level 3 Foundation Diploma in Higher Education Studies (HES) (Online)",
-  "Level 3: OTHM Level 3 Foundation Diploma in Information Technology (Online)",
   "Level 3: OTHM Level 3 Foundation Diploma in Business Management (Online)",
-  "Level 5: OTHM Level 5 Extended Diploma in Information Technology (Online)",
+  "Level 3: OTHM Level 3 Foundation Diploma in Higher Education Studies (HES)",
+  "Level 3: OTHM Level 3 Foundation Diploma in Higher Education Studies (HES) (Online)",
+  "Level 3: OTHM Level 3 Foundation Diploma in Information Technology",
+  "Level 3: OTHM Level 3 Foundation Diploma in Information Technology (Online)",
+
+  // Level 5
+  "Level 5: OTHM Level 5 Extended Diploma in Business Management",
   "Level 5: OTHM Level 5 Extended Diploma in Business Management (Online)",
-  "Level 5: OTHM Level 5 Diploma in Tourism and Hospitality Management (Online)",
-  "Level 5: OTHM Level 5 Diploma in Logistics and Supply Chain Management (Online)",
   "Level 5: OTHM Level 5 Extended Diploma in Health and Social Care Management",
-  "Level 6: OTHM Level 6 Diploma in Tourism and Hospitality Management",
-  "Level 6: OTHM Level 6 Diploma in Business Management",
-  "Level 7: OTHM Level 7 Diploma in Human Resource Management",
   "Level 5: OTHM Level 5 Extended Diploma in Health and Social Care Management (Online)",
-  "Level 6: OTHM Level 6 Diploma in Tourism and Hospitality Management (Online)",
+  "Level 5: OTHM Level 5 Extended Diploma in Information Technology",
+  "Level 5: OTHM Level 5 Extended Diploma in Information Technology (Online)",
+  "Level 5: OTHM Level 5 Diploma in Logistics and Supply Chain Management",
+  "Level 5: OTHM Level 5 Diploma in Logistics and Supply Chain Management (Online)",
+  "Level 5: OTHM Level 5 Diploma in Tourism and Hospitality Management",
+  "Level 5: OTHM Level 5 Diploma in Tourism and Hospitality Management (Online)",
+
+  // Level 6
+  "Level 6: OTHM Level 6 Diploma in Business Management",
   "Level 6: OTHM Level 6 Diploma in Business Management (Online)",
+  "Level 6: OTHM Level 6 Diploma in Tourism and Hospitality Management",
+  "Level 6: OTHM Level 6 Diploma in Tourism and Hospitality Management (Online)",
+
+  // Level 7
+  "Level 7: OTHM Level 7 Diploma in Human Resource Management",
   "Level 7: OTHM Level 7 Diploma in Human Resource Management (Online)",
 ] as const;
 export const teacherLevels = [
