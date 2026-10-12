@@ -25,15 +25,20 @@ export function Choice({
   onChange,
   items,
   label,
+  className,
 }: {
   value: string;
   onChange: (v: string) => void;
   items: string[];
   label: string;
+  className?: string;
 }) {
   return (
     <Select value={value} onValueChange={(v) => v && onChange(v)}>
-      <SelectTrigger aria-label={label} className="w-full min-w-36">
+      <SelectTrigger
+        aria-label={label}
+        className={className ?? "w-full min-w-36"}
+      >
         <SelectValue
           placeholder={
             label === "Lecturer role"

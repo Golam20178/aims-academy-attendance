@@ -1253,7 +1253,7 @@ export function Reports({ db }: { db: Database }) {
       </Heading>
       <Card>
         <CardContent className="flex flex-wrap items-end gap-4 pt-5">
-          <div className="w-40 space-y-2">
+          <div className="flex w-40 flex-col gap-2">
             <Label>People</Label>
             <Choice
               label="Report people"
@@ -1262,7 +1262,7 @@ export function Reports({ db }: { db: Database }) {
               items={["students", "teachers"]}
             />
           </div>
-          <div className="w-40 space-y-2">
+          <div className="flex w-full flex-col gap-2 lg:w-[42rem]">
             <Label>Level</Label>
             <Choice
               label="Report level"
@@ -1272,9 +1272,10 @@ export function Reports({ db }: { db: Database }) {
                 "All levels",
                 ...(kind === "students" ? levels : teacherLevels),
               ]}
+              className="w-full"
             />
           </div>
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="report-from">From</Label>
             <Input
               id="report-from"
@@ -1283,7 +1284,7 @@ export function Reports({ db }: { db: Database }) {
               onInput={(e) => setFrom(e.currentTarget.value)}
             />
           </div>
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="report-to">To</Label>
             <Input
               id="report-to"
