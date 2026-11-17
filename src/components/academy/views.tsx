@@ -326,7 +326,7 @@ export function People({ kind, db }: { kind: Kind; db: Database }) {
                 }}
               />
             </div>
-            <div className="w-40">
+            <div className="w-[600px]">
               <Choice
                 label="Filter level"
                 value={level}
