@@ -143,7 +143,7 @@ export function Portal({ page, id }: { page: string; id?: string }) {
         <SidebarFooter className="p-4">
           <div className="rounded-xl border bg-background p-3 text-xs text-muted-foreground">
             <Badge variant="secondary" className="mb-2">
-              Connected workspace
+              Connected Workspace
             </Badge>
             <p>Records are shared securely through your academy database.</p>
           </div>
